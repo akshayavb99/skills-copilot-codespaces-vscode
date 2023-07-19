@@ -1,66 +1,69 @@
-// Create a web server
-var http = require('http');
-var fs = require('fs');
-var path = require('path');
-var mime = require('mime');
-var cache = {}; // cache file content
+// Create web server with express
+const express = require('express');
+const app = express();
 
-// Create HTTP server
-var server = http.createServer(function(request, response) {
-	var filePath = false;
+// Create a route to handle incoming requests
+// app.get('/', (req, res) => {
+//     res.send('This is the home page');
+// });
 
-	if (request.url == '/') {
-		filePath = 'public/index.html';
-	} else {
-		filePath = 'public' + request.url;
-	}
+// app.get('/comments', (req, res) => {
+//     res.send('This is the comments page');
+// });
 
-	var absPath = './' + filePath;
-	serveStatic(response, cache, absPath);
+// app.get('/comments/new', (req, res) => {
+//     res.send('This is the new comments page');
+// });
+
+// app.get('/comments/:id', (req, res) => {
+//     res.send('This is the page for comment with id: ' + req.params.id);
+// });
+
+// app.get('/comments/:id/edit', (req, res) => {
+//     res.send('This is the page for editing comment with id: ' + req.params.id);
+// });
+
+// app.post('/comments', (req, res) => {
+//     res.send('You have submitted the comment to the database');
+// });
+
+// app.patch('/comments/:id', (req, res) => {
+//     res.send('You have edited the comment with id: ' + req.params.id);
+// });
+
+// app.delete('/comments/:id', (req, res) => {
+//     res.send('You have deleted the comment with id: ' + req.params.id);
+// });
+
+// app.listen(3000, () => {
+//     console.log('Server is listening on port 3000');
+// });
+
+// Path: comments.js
+// Create web server with express
+const express = require('express');
+const app = express();
+
+// Create a route to handle incoming requests
+app.get('/', (req, res) => {
+    res.send('This is the home page');
 });
 
-server.listen(3000, function() {
-	console.log("Server listening on port 3000.");
+app.get('/comments', (req, res) => {
+    res.send('This is the comments page');
 });
 
-// Create socket.io server
-var chatServer = require('./lib/chat_server');
-chatServer.listen(server);
+app.get('/comments/new', (req, res) => {
+    res.send('This is the new comments page');
+});
 
-// 404 page
-function send404(response) {
-	response.writeHead(404, {'Content-Type': 'text/plain'});
-	response.write('Error 404: resource not found.');
-	response.end();
-}
+app.get('/comments/:id', (req, res) => {
+    res.send('This is the page for comment with id: ' + req.params.id);
+});
 
-// Send file data
-function sendFile(response, filePath, fileContents) {
-	response.writeHead(200, {'Content-Type': mime.lookup(path.basename(filePath))});
-	response.end(fileContents);
-}
+app.get('/comments/:id/edit', (req, res) => {
+    res.send('This is the page for editing comment with id: ' + req.params.id);
+});
 
-// Serve static file
-function serveStatic(response, cache, absPath) {
-	// Check if file is cached in memory
-	if (cache[absPath]) {
-		sendFile(response, absPath, cache[absPath]); // Serve file from memory
-	} else {
-		// Check if file exists
-		fs.exists(absPath, function(exists) {
-			if (exists) {
-				// Read file from disk
-				fs.readFile(absPath, function(err, data) {
-					if (err) {
-						send404(response);
-					} else {
-						cache[absPath] = data; // Cache file in memory
-						sendFile(response, absPath, data); // Serve file from disk
-					}
-				});
-			} else {
-				send404(response); // Send 404 response
-			}
-		});
-	}
-}
+app.post('/comments', (req, res) => {
+    res.send('You have submitted the comment
